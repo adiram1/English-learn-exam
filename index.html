@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>מבחן אוצר מילים באנגלית</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .score {
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+            button:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+
+        .correct {
+            background-color: #28a745 !important;
+        }
+
+        .wrong {
+            background-color: #dc3545 !important;
+        }
+
+        .message {
+            margin-top: 20px;
+            height: 30px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="score">ניקוד: <span id="scoreVal">0</span> | מילה <span id="currentVal">1</span> מתוך <span id="totalVal">0</span></div>
+        <h2 id="wordDisplay">Loading...</h2>
+        <div class="options" id="optionsContainer">
+        </div>
+        <div class="message" id="msg"></div>
+        <button id="nextBtn" style="display:none; margin-top:20px; width:100%; background-color: #333;" onclick="nextQuestion()">הבא</button>
+    </div>
+
+    <script>
+    const vocabulary = [
+        {eng: "Abandon", heb: "לנטוש"}, {eng: "Accompany", heb: "ללוות"}, {eng: "Accumulate", heb: "לצבור"},
+        {eng: "Adapt", heb: "להסתגל"}, {eng: "Theme", heb: "נושא מרכזי"}, {eng: "Ambiguous", heb: "דו משמעי"},
+        {eng: "Study", heb: "מחקר"}, {eng: "Appreciate", heb: "להעריך"}, {eng: "Background", heb: "רקע"},
+        {eng: "Bias", heb: "דעה קדומה"}, {eng: "Chart", heb: "תרשים"}, {eng: "Contradict", heb: "לסתור"},
+        {eng: "Article", heb: "מאמר"}, {eng: "Comprehensive", heb: "מקיף"}, {eng: "Confirm", heb: "לאשר"},
+        {eng: "Conform", heb: "להתאים"}, {eng: "Contemporary", heb: "עכשווי"}, {eng: "Pros", heb: "יתרונות"},
+        {eng: "Cons", heb: "חסרונות"}, {eng: "Respond", heb: "להגיב"}, {eng: "Destructive", heb: "הרסני"},
+        {eng: "Term", heb: "מונח"}, {eng: "Discourage", heb: "להרתיע"}, {eng: "Purpose", heb: "מטרה"},
+        {eng: "Statement", heb: "הצהרה"}, {eng: "On the contrary", heb: "בניגוד ל"}, {eng: "Uniform", heb: "אחיד"},
+        {eng: "Currency", heb: "מטבע"}, {eng: "Crucial", heb: "חיוני"}, {eng: "Decade", heb: "עשור"},
+        {eng: "Definite", heb: "מובהק"}, {eng: "Denote", heb: "לציין"}, {eng: "Deny", heb: "להכחיש"},
+        {eng: "Detect", heb: "לגלות"}, {eng: "Deviate", heb: "לסטות"}, {eng: "Differentiate", heb: "להבדיל"},
+        {eng: "File", heb: "קובץ"}, {eng: "Against", heb: "נגד"}, {eng: "In favor of", heb: "בעד"},
+        {eng: "Researcher", heb: "חוקר"}, {eng: "Support", heb: "תומך"}, {eng: "Opinion", heb: "דעה"},
+        {eng: "Exhibit", heb: "להציג"}, {eng: "Investigate", heb: "לחקור"}, {eng: "Artificial", heb: "מלאכותי"},
+        {eng: "Account for", heb: "להסביר"}, {eng: "Dispose", heb: "לזרוק"}, {eng: "Substance", heb: "חומר"},
+        {eng: "Deception", heb: "הטעיה"}, {eng: "Derive", heb: "לנבוע מ"}
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let shuffledVocab = [];
+
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    function initGame() {
+        shuffledVocab = shuffle([...vocabulary]);
+        document.getElementById('totalVal').innerText = shuffledVocab.length;
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const item = shuffledVocab[currentQuestion];
+        document.getElementById('wordDisplay').innerText = item.eng;
+        document.getElementById('currentVal').innerText = currentQuestion + 1;
+        document.getElementById('msg').innerText = "";
+        document.getElementById('nextBtn').style.display = "none";
+
+        // Generate options (1 correct + 3 wrong)
+        let options = [item.heb];
+        while (options.length < 4) {
+            let randomWord = vocabulary[Math.floor(Math.random() * vocabulary.length)].heb;
+            if (!options.includes(randomWord)) options.push(randomWord);
+        }
+        options = shuffle(options);
+
+        const container = document.getElementById('optionsContainer');
+        container.innerHTML = "";
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, item.heb);
+            container.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, correctHeb) {
+        const buttons = document.querySelectorAll('.options button');
+        buttons.forEach(b => b.disabled = true); // Disable all
+
+        if (btn.innerText === correctHeb) {
+            btn.classList.add('correct');
+            document.getElementById('msg').innerText = "נכון מאוד! 👏";
+            document.getElementById('msg').style.color = "green";
+            score++;
+            document.getElementById('scoreVal').innerText = score;
+        } else {
+            btn.classList.add('wrong');
+            document.getElementById('msg').innerText = "לא נכון. התשובה היא: " + correctHeb;
+            document.getElementById('msg').style.color = "red";
+            // Highlight the correct one
+            buttons.forEach(b => {
+                if (b.innerText === correctHeb) b.classList.add('correct');
+            });
+        }
+        document.getElementById('nextBtn').style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < shuffledVocab.length) {
+            loadQuestion();
+        } else {
+            document.querySelector('.card').innerHTML = `<h2>סיימת!</h2><p>הציון שלך: ${score} מתוך ${shuffledVocab.length}</p><button onclick="location.reload()">התחל מחדש</button>`;
+        }
+    }
+
+    initGame();
+    </script>
+
+</body>
+</html>
