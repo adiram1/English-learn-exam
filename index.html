@@ -171,12 +171,11 @@
     }
 
     function nextQuestion() {
-        let len = ${shuffledVocab.length}*2;
         currentQuestion++;
         if (currentQuestion < shuffledVocab.length) {
             loadQuestion();
         } else {
-            document.querySelector('.card').innerHTML = `<h2>סיימת!</h2><p>הציון שלך: ${score} מתוך ${len}</p><button onclick="location.reload()">התחל מחדש</button>`;
+            document.querySelector('.card').innerHTML = `<h2>סיימת!</h2><p>הציון שלך: ${score} מתוך ${shuffledVocab.length}</p><button onclick="location.reload()">התחל מחדש</button>`;
         }
     }
 
@@ -186,5 +185,6 @@
 </body>
 
 </html>
+
 
 
