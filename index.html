@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -127,7 +127,7 @@
     function loadQuestion() {
         const item = shuffledVocab[currentQuestion];
         document.getElementById('wordDisplay').innerText = item.eng;
-        document.getElementById('currentVal').innerText = currentQuestion + 2;
+        document.getElementById('currentVal').innerText = currentQuestion ++;
         document.getElementById('msg').innerText = "";
         document.getElementById('nextBtn').style.display = "none";
 
@@ -172,11 +172,12 @@
     }
 
     function nextQuestion() {
+        let len = ${shuffledVocab.length}*2;
         currentQuestion++;
         if (currentQuestion < shuffledVocab.length) {
             loadQuestion();
         } else {
-            document.querySelector('.card').innerHTML = `<h2>סיימת!</h2><p>הציון שלך: ${score} מתוך ${shuffledVocab.length}</p><button onclick="location.reload()">התחל מחדש</button>`;
+            document.querySelector('.card').innerHTML = `<h2>סיימת!</h2><p>הציון שלך: ${score} מתוך ${len}</p><button onclick="location.reload()">התחל מחדש</button>`;
         }
     }
 
