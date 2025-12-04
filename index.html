@@ -127,11 +127,10 @@
     function loadQuestion() {
         const item = shuffledVocab[currentQuestion];
         document.getElementById('wordDisplay').innerText = item.eng;
-        document.getElementById('currentVal').innerText = currentQuestion ++;
+        document.getElementById('currentVal').innerText = currentQuestion +1;
         document.getElementById('msg').innerText = "";
         document.getElementById('nextBtn').style.display = "none";
 
-        // Generate options (1 correct + 3 wrong)
         let options = [item.heb];
         while (options.length < 4) {
             let randomWord = vocabulary[Math.floor(Math.random() * vocabulary.length)].heb;
@@ -151,7 +150,7 @@
 
     function checkAnswer(btn, correctHeb) {
         const buttons = document.querySelectorAll('.options button');
-        buttons.forEach(b => b.disabled = true); // Disable all
+        buttons.forEach(b => b.disabled = true);
 
         if (btn.innerText === correctHeb) {
             btn.classList.add('correct');
@@ -187,4 +186,5 @@
 </body>
 
 </html>
+
 
