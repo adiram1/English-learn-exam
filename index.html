@@ -127,7 +127,7 @@
     function loadQuestion() {
         const item = shuffledVocab[currentQuestion];
         document.getElementById('wordDisplay').innerText = item.eng;
-        document.getElementById('currentVal').innerText = currentQuestion +1;
+        document.getElementById('currentVal').innerText = currentQuestion ++;
         document.getElementById('msg').innerText = "";
         document.getElementById('nextBtn').style.display = "none";
 
@@ -185,6 +185,7 @@
 </body>
 
 </html>
+
 
 
 
